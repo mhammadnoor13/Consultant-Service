@@ -1,0 +1,6 @@
+@ConsultantService.Api_HostAddress = http://localhost:5118
+
+GET {{ConsultantService.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
