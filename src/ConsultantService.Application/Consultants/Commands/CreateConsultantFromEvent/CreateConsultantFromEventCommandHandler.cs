@@ -19,7 +19,7 @@ public sealed class CreateConsultantFromEventCommandHandler
 
     public async Task<Result<Domain.Shared.Unit>> Handle(CreateConsultantFromEventCommand cmd, CancellationToken ct)
     {
-        var consultant = Consultant.Create(cmd.FirstName, cmd.LastName, cmd.Email, cmd.Speciality);
+        var consultant = Consultant.Create(cmd.Id,cmd.FirstName, cmd.LastName, cmd.Email, cmd.Speciality);
         consultant.Value.Id = cmd.Id;
         if (consultant.IsFailure)
             return Result<Domain.Shared.Unit>.Failure(consultant.Error);

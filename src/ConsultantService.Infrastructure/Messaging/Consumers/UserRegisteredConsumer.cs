@@ -3,6 +3,7 @@ using Contracts;
 using MediatR;
 using ConsultantService.Application.Consultants.Commands.CreateConsultantFromEvent;
 using System.Text.Json;
+using Contracts.Shared;
 
 public class UserRegisteredConsumer : IConsumer<IUserRegistered>
 {

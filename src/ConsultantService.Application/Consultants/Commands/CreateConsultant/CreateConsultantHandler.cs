@@ -24,7 +24,7 @@ public sealed class CreateConsultantHandler : IRequestHandler<CreateConsultantCm
 
     public async Task<Result<Guid>> Handle(CreateConsultantCmd request, CancellationToken cancellationToken)
     {
-        var make = Consultant.Create(request.FirstName, request.LastName, request.Email, request.Speciality);
+        var make = Consultant.Create(Guid.NewGuid(),request.FirstName, request.LastName, request.Email, request.Speciality);
 
         if (make.IsFailure) { return Result<Guid>.Failure(make.Error); }
 

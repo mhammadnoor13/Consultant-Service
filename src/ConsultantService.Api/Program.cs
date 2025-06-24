@@ -4,6 +4,8 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using Serilog;
 using Infrastructure;
+using ConsultantService.Api.Consumers;
+using ConsultantService.Application.UseCases;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +24,8 @@ builder.Services
     .AddApplication()
     .AddInfrastructure(builder.Configuration);
 
+builder.Services.AddScoped<ICreateProfileUseCase, CreateProfileUseCase>();
+
 
 
 builder.Host.UseSerilog((context, conifguration) =>
@@ -32,6 +36,7 @@ builder.Services.AddMassTransit(busConfigurator =>
     //x.AddConsumer<UserRegisteredConsumer>();
     //x.AddConsumer<CaseSubmittedConsumers>();
     busConfigurator.SetKebabCaseEndpointNameFormatter();
+    busConfigurator.AddConsumer<CreateConsultantProfileConsumer>();
 
     busConfigurator.UsingRabbitMq((context, cfg) =>
     {

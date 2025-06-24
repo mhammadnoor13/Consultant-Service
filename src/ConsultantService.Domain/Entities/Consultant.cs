@@ -14,7 +14,7 @@ public class Consultant
 {
     [BsonId]
     [BsonRepresentation(MongoDB.Bson.BsonType.String)]
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; set; }
     public string FirstName { get; set; }
 
     public string LastName { get; set; }
@@ -26,6 +26,7 @@ public class Consultant
     private Consultant() { }
 
     public static Result<Consultant> Create(
+        Guid id,
         string? firstName,
         string? lastName,
         string? email,
@@ -40,6 +41,7 @@ public class Consultant
                     {
                         var consultant = new Consultant
                         {
+                            Id = id,
                             FirstName = fn,
                             LastName = ln,
                             Email = em,
