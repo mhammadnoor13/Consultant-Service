@@ -4,11 +4,11 @@ using MediatR;
 using ConsultantService.Application.Consultants.Commands.CreateConsultantFromEvent;
 using System.Text.Json;
 using Contracts.Shared;
+using Serilog;
 
 public class UserRegisteredConsumer : IConsumer<IUserRegistered>
 {
     private readonly IMediator _mediator;
-
     public UserRegisteredConsumer(IMediator mediator)
     {
         _mediator = mediator;
