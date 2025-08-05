@@ -22,7 +22,6 @@ public sealed class GetAllConsultantsHandler
         GetAllConsultantsQuery request,
         CancellationToken ct)
     {
-        // Calls your MongoConsultantRepository.GetAllAsync() :contentReference[oaicite:2]{index=2}:contentReference[oaicite:3]{index=3}
         return await _repo.GetAllAsync(ct);
     }
 }

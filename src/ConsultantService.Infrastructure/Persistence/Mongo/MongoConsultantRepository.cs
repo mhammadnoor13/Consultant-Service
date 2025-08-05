@@ -1,5 +1,4 @@
-﻿// Infrastructure/Persistence/Mongo/MongoConsultantRepository.cs
-using Domain.Entities;
+﻿using Domain.Entities;
 using Domain.Shared;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -14,7 +13,6 @@ namespace Infrastructure.Persistence.Mongo
 
         public MongoConsultantRepository(IMongoDatabase database)
         {
-            // ensure the database & collection names match your config
             _collection = database.GetCollection<Consultant>("Consultants");
         }
 
@@ -27,7 +25,6 @@ namespace Infrastructure.Persistence.Mongo
             }
             catch (Exception ex)
             {
-                // surface the error so you can see it in logs if needed
                 return Result<Unit>.Failure($"Failed to insert consultant: {ex.Message}");
             }
         }
@@ -84,6 +81,29 @@ namespace Infrastructure.Persistence.Mongo
                        update,
                        new() { IsUpsert = false },
                        ct);
+        }
+
+        public async Task<Result<IEnumerable<Guid>>> GetAssingedCases(Guid consultantId, CancellationToken ct = default)
+        {
+            try
+            {
+                var filter = Builders<Consultant>.Filter.Eq(c => c.Id, consultantId);
+                var consultant = _collection
+                    .Find(filter)
+                    .FirstOrDefault(ct);
+
+                if (consultant is null)
+                {
+                    return Result<IEnumerable<Guid>>.Failure($"Consultant with id {consultantId} not found.");
+                }
+
+                return Result<IEnumerable<Guid>>
+                    .Success(consultant.CasesAssigned);
+            }
+            catch (Exception ex)
+            {
+                return Result<IEnumerable<Guid>>.Failure($"Error fetching assigned cases: {ex.Message}");
+            }
         }
     }
 }

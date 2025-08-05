@@ -3,6 +3,7 @@ using Application.Consultants.DTOs;
 using Application.Consultants.Queries;
 using Application.Consultants.Queries.GetAll;
 using Application.Consultants.Queries.GetById;
+using ConsultantService.Application.Contracts;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,15 +11,17 @@ namespace WebApi.Controllers
 {
 
     [ApiController]
-    [Route("[controller]")]
+    [Route("consultants")]
     public class ConsultantsController : ControllerBase
     {
 
         private readonly IMediator _mediator;
+        private readonly IConsultantQueryService _consultantQueryService;
 
-        public ConsultantsController(IMediator mediator)
+        public ConsultantsController(IMediator mediator, IConsultantQueryService consultantQueryService)
         {
             _mediator = mediator;
+            _consultantQueryService = consultantQueryService;
         }
 
         [HttpPost]
@@ -57,6 +60,27 @@ namespace WebApi.Controllers
 
             return Ok(result.Value);
         }
+
+
+        [HttpGet("assigned-cases")]
+        public async Task<IActionResult> GetAssignedCases( CancellationToken ct)
+        {
+            if (!Guid.TryParse(Request.Headers["X-User-Id"], out var consultantId))
+                return Unauthorized();
+
+            var cases = await _consultantQueryService.GetAssignedCasesAsync(consultantId, ct);
+
+            return Ok(cases);
+        }
+
+        [HttpGet("{consultantId}/assigned-cases")]
+        public async Task<IActionResult> GetAssignedCases(Guid consultantId, CancellationToken ct)
+        {
+            var cases =await _consultantQueryService.GetAssignedCasesAsync(consultantId,ct);
+
+            return Ok(cases);
+        }
+
 
 
 

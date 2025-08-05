@@ -8,6 +8,11 @@ using ConsultantService.Api.Consumers;
 using ConsultantService.Application.UseCases;
 using ConsultantService.Infrastructure.Messaging.Consumers;
 using Serilog.Events;
+using ConsultantService.Application.Contracts;
+using ConsultantService.Application.Services;
+using ConsultantService.Infrastructure.Clients;
+using Application.Common.Persistence;
+using Infrastructure.Persistence.Mongo;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,11 +37,20 @@ var mbUser = builder.Configuration["MessageBroker:Username"];
 var mbPass = builder.Configuration["MessageBroker:Password"];
 Log.Information("RabbitMQ Config → Host: {Host}, User: {User}", mbHost, mbUser);
 
+
+
 builder.Services
     .AddApplication()
     .AddInfrastructure(builder.Configuration);
 
-builder.Services.AddScoped<ICreateProfileUseCase, CreateProfileUseCase>();
+
+builder.Services
+    .AddScoped<IConsultantQueryService, ConsultantQueryService>()
+    .AddScoped<ICreateProfileUseCase, CreateProfileUseCase>()
+    .AddScoped<IConsultantRepository, MongoConsultantRepository>()
+    .AddHttpClient<ICaseServiceClient, CaseServiceClient>(c =>
+        c.BaseAddress = new Uri(builder.Configuration["CaseService:BaseUrl"]));
+
 
 
 
@@ -45,8 +59,8 @@ builder.Services.AddScoped<ICreateProfileUseCase, CreateProfileUseCase>();
 
 builder.Services.AddMassTransit(busConfigurator =>
 {
-    busConfigurator.AddConsumer<CaseSubmittedConsumers>();
     busConfigurator.SetKebabCaseEndpointNameFormatter();
+    busConfigurator.AddConsumer<CaseSubmittedConsumer>();
     busConfigurator.AddConsumer<UserRegisteredConsumer>();
     busConfigurator.AddConsumer<CreateConsultantProfileConsumer>();
 

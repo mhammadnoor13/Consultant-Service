@@ -1,29 +1,38 @@
 ﻿using ConsultantService.Application.Consultants.Commands.AssignCase;
 using ConsultantService.Application.Consultants.Commands.CreateConsultantFromEvent;
 using Contracts;
+using Contracts.Shared.Events;
 using MassTransit;
 using MediatR;
 using Serilog;
 
 namespace ConsultantService.Infrastructure.Messaging.Consumers
 {
-    public class CaseSubmittedConsumers : IConsumer<ICaseSubmitted>
+    public class CaseSubmittedConsumer : IConsumer<CaseSubmitted>
     {
         private readonly IMediator _mediator;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-        public CaseSubmittedConsumers(IMediator mediator)
+        public CaseSubmittedConsumer(IMediator mediator, IPublishEndpoint publishEndpoint)
         {
             _mediator = mediator;
+            _publishEndpoint = publishEndpoint;
         }
 
-        public async Task Consume(ConsumeContext<ICaseSubmitted> context)
+        public async Task Consume(ConsumeContext<CaseSubmitted> context)
         {
-            Log.Information("[CONSUME] got {CaseId} – {Spec}", context.Message.Id, context.Message.Speciality);
+            Log.Information("[CONSUME] got {CaseId} – {Spec}", context.Message.CaseId, context.Message.Speciality);
 
-            var ev = context.Message;
+            var msg = context.Message;
             
-            await _mediator.Send(new AssignCaseCommand(ev.Id, ev.Speciality), context.CancellationToken);
+            var consultantId = await _mediator.Send(new AssignCaseCommand(msg.CaseId, msg.Speciality), context.CancellationToken);
 
+            await _publishEndpoint.Publish<CaseAssigned>(new
+            {
+                CaseId = msg.CaseId,
+                ConsultantId = consultantId
+            },
+            context.CancellationToken);
         }
     }
 }

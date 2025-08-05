@@ -3,13 +3,13 @@ using MediatR;
 
 namespace ConsultantService.Application.Consultants.Commands.AssignCase
 {
-    public sealed class AssignCaseCommandHandler : IRequestHandler<AssignCaseCommand>
+    public sealed class AssignCaseCommandHandler : IRequestHandler<AssignCaseCommand, Guid>
     {
         private readonly IConsultantRepository _repo;
 
         public AssignCaseCommandHandler(IConsultantRepository repo) => _repo = repo;
 
-        public async Task Handle(AssignCaseCommand cmd, CancellationToken ct)
+        public async Task<Guid> Handle(AssignCaseCommand cmd, CancellationToken ct)
         {
             var consultant = await _repo.GetBySpecialityAsync(cmd.Speciality, ct);
             if (consultant.Value is null)
@@ -17,6 +17,7 @@ namespace ConsultantService.Application.Consultants.Commands.AssignCase
                     $"No consultant registered for speciality '{cmd.Speciality}'.");
 
             await _repo.AppendCaseAsync(consultant.Value.Id, cmd.CaseId, ct);
+            return consultant.Value.Id;
         }
     }
 }
