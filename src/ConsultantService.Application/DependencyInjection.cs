@@ -1,4 +1,7 @@
-﻿using FluentValidation;
+﻿using ConsultantService.Application.Contracts;
+using ConsultantService.Application.Services;
+using ConsultantService.Application.UseCases;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application;
@@ -9,11 +12,14 @@ public static class DependencyInjection
     {
 
         var assembly = typeof(DependencyInjection).Assembly;
+
         services.AddMediatR(configuration =>
-            configuration.RegisterServicesFromAssemblies(
-            typeof(DependencyInjection).Assembly));
+            configuration.RegisterServicesFromAssembly(assembly));
 
         services.AddValidatorsFromAssembly(assembly);
+
+        services.AddScoped<IConsultantQueryService, ConsultantQueryService>();
+        services.AddScoped<ICreateProfileUseCase, CreateProfileUseCase>();
 
         return services;
     }

@@ -44,12 +44,7 @@ builder.Services
     .AddInfrastructure(builder.Configuration);
 
 
-builder.Services
-    .AddScoped<IConsultantQueryService, ConsultantQueryService>()
-    .AddScoped<ICreateProfileUseCase, CreateProfileUseCase>()
-    .AddScoped<IConsultantRepository, MongoConsultantRepository>()
-    .AddHttpClient<ICaseServiceClient, CaseServiceClient>(c =>
-        c.BaseAddress = new Uri(builder.Configuration["CaseService:BaseUrl"]));
+
 
 
 
@@ -57,24 +52,7 @@ builder.Services
 //builder.Host.UseSerilog((context, conifguration) =>
 //    conifguration.ReadFrom.Configuration(context.Configuration));
 
-builder.Services.AddMassTransit(busConfigurator =>
-{
-    busConfigurator.SetKebabCaseEndpointNameFormatter();
-    busConfigurator.AddConsumer<CaseSubmittedConsumer>();
-    busConfigurator.AddConsumer<UserRegisteredConsumer>();
-    busConfigurator.AddConsumer<CreateConsultantProfileConsumer>();
 
-    busConfigurator.UsingRabbitMq((context, cfg) =>
-    {
-        cfg.Host(new Uri(builder.Configuration["MessageBroker:Host"]!), h =>
-        {
-            h.Username(builder.Configuration["MessageBroker:Username"]);
-            h.Password(builder.Configuration["MessageBroker:Password"]);
-        });
-
-        cfg.ConfigureEndpoints(context);          // auto-create endpoints
-    });
-});
 
 
 

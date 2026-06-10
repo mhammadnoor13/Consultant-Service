@@ -25,7 +25,8 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateConsultantDto dto)
+        public async Task<IActionResult> Create(
+            [FromBody] CreateConsultantDto dto)
         {
             var cmd = new CreateConsultantCmd(dto.FirstName, dto.LastName, dto.Email, dto.Speciality);
             var result = await _mediator.Send(cmd);
@@ -37,7 +38,6 @@ namespace WebApi.Controllers
                     value: result.Value)
                 : BadRequest(result.Error);
                 ;
-
         }
 
         [HttpGet("{id:Guid}",Name ="GetConsultantById")]

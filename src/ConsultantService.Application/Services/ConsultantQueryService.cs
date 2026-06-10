@@ -1,7 +1,6 @@
 ﻿using Application.Common.Persistence;
 using ConsultantService.Application.Contracts;
 using ConsultantService.Application.Dtos;
-using Contracts.Shared.Responses;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;

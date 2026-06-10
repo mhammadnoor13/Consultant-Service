@@ -34,7 +34,5 @@ public sealed class CreateConsultantHandler : IRequestHandler<CreateConsultantCm
 
         return Result<Guid>.Success(make.Value.Id);
 
-
-
     }
 }

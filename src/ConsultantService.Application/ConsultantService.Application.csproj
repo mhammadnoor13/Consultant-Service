@@ -9,7 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Common\Contracts\Contracts.Shared\Contracts.Shared.csproj" />
     <ProjectReference Include="..\ConsultantService.Domain\ConsultantService.Domain.csproj" />
   </ItemGroup>
 
