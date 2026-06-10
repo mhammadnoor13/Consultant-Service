@@ -1,6 +1,5 @@
 ﻿using ConsultantService.Application.Contracts;
 using ConsultantService.Application.Dtos;
-using Contracts.Shared.Responses;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;

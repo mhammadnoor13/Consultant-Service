@@ -1,14 +1,12 @@
 ﻿using ConsultantService.Application.Consultants.Commands.AssignCase;
-using ConsultantService.Application.Consultants.Commands.CreateConsultantFromEvent;
-using Contracts;
-using Contracts.Shared.Events;
 using MassTransit;
 using MediatR;
 using Serilog;
+using ConsultantPlatform.Contracts.Events;
 
 namespace ConsultantService.Infrastructure.Messaging.Consumers
 {
-    public class CaseSubmittedConsumer : IConsumer<CaseSubmitted>
+    public class CaseSubmittedConsumer : IConsumer<CaseSubmittedEvent>
     {
         private readonly IMediator _mediator;
         private readonly IPublishEndpoint _publishEndpoint;
@@ -19,7 +17,7 @@ namespace ConsultantService.Infrastructure.Messaging.Consumers
             _publishEndpoint = publishEndpoint;
         }
 
-        public async Task Consume(ConsumeContext<CaseSubmitted> context)
+        public async Task Consume(ConsumeContext<CaseSubmittedEvent> context)
         {
             Log.Information("[CONSUME] got {CaseId} – {Spec}", context.Message.CaseId, context.Message.Speciality);
 
@@ -27,7 +25,7 @@ namespace ConsultantService.Infrastructure.Messaging.Consumers
             
             var consultantId = await _mediator.Send(new AssignCaseCommand(msg.CaseId, msg.Speciality), context.CancellationToken);
 
-            await _publishEndpoint.Publish<CaseAssigned>(new
+            await _publishEndpoint.Publish<CaseAssignedEvent>(new
             {
                 CaseId = msg.CaseId,
                 ConsultantId = consultantId

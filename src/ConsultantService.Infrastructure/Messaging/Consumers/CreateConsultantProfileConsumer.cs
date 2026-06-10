@@ -1,8 +1,7 @@
 ﻿using MassTransit;
-
-using Contracts.Shared.Commands;
-using Contracts.Shared.Responses;
 using ConsultantService.Application.UseCases;
+using ConsultantPlatform.Contracts.Commands;
+using ConsultantPlatform.Contracts.Responses;
 
 namespace ConsultantService.Api.Consumers
 {
@@ -31,7 +30,7 @@ namespace ConsultantService.Api.Consumers
 
                 await context.RespondAsync(new ConsultantProfileCreatedResponse(userId));
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException ex)    
             {
                 // MassTransit will automatically publish a Fault<CreateUserCommand>
                 throw;

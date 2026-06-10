@@ -1,12 +1,11 @@
 ﻿using MassTransit;
-using Contracts;
 using MediatR;
-using ConsultantService.Application.Consultants.Commands.CreateConsultantFromEvent;
+using ConsultantService.Application.Consultants.Commands.CreateConsultantFromEvent; 
 using System.Text.Json;
-using Contracts.Shared;
 using Serilog;
+using ConsultantPlatform.Contracts.Events;
 
-public class UserRegisteredConsumer : IConsumer<IUserRegistered>
+public class UserRegisteredConsumer : IConsumer<UserRegisteredEvent>
 {
     private readonly IMediator _mediator;
     public UserRegisteredConsumer(IMediator mediator)
@@ -14,7 +13,7 @@ public class UserRegisteredConsumer : IConsumer<IUserRegistered>
         _mediator = mediator;
     }
 
-    public async Task Consume(ConsumeContext<IUserRegistered> context)
+    public async Task Consume(ConsumeContext<UserRegisteredEvent> context)
     {
         var msg = context.Message;
         var command = new CreateConsultantFromEventCommand(
